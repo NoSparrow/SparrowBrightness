@@ -1,5 +1,6 @@
 import sys
 import os
+import subprocess
 from PyQt5 import QtWidgets, QtGui, QtCore
 
 class BrightnessControl(QtWidgets.QWidget):
@@ -14,10 +15,10 @@ class BrightnessControl(QtWidgets.QWidget):
         self.brightness_slider = QtWidgets.QSlider(QtCore.Qt.Horizontal, self)
         self.brightness_slider.setMinimum(20)
         self.brightness_slider.setMaximum(100)
-        self.brightness_slider.setValue(50)
-        self.brightness_slider.valueChanged.connect(self.update_brightness_label)
+        self.brightness_slider.setValue(self.get_brightness())
+        self.brightness_slider.valueChanged.connect(self.set_brightness)
 
-        self.brightness_label = QtWidgets.QLabel('50%', self)
+        self.brightness_label = QtWidgets.QLabel(f'{self.brightness_slider.value()}%', self)
 
         self.language_combo = QtWidgets.QComboBox(self)
         self.language_combo.addItem('English')
@@ -43,7 +44,12 @@ class BrightnessControl(QtWidgets.QWidget):
 
         self.tray_icon.show()
 
-    def update_brightness_label(self, value):
+    def get_brightness(self):
+        result = subprocess.run(['xbacklight', '-get'], stdout=subprocess.PIPE)
+        return int(float(result.stdout))
+
+    def set_brightness(self, value):
+        subprocess.run(['xbacklight', '-set', str(value)])
         self.brightness_label.setText(f'{value}%')
 
     def change_language(self, index):
