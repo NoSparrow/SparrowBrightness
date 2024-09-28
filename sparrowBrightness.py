@@ -76,7 +76,7 @@ class BrightnessApp:
         port_label.pack(side=tk.LEFT, padx=10)
 
         brightness_slider = ttk.Scale(port_frame, from_=1, to=100, orient=tk.HORIZONTAL, state=tk.NORMAL if active else tk.DISABLED)
-        brightness_slider.set(50)  # Domyślna jasność
+        brightness_slider.set(100)  # Domyślna jasność
 
         # Funkcja do zmiany jasności
         def on_slider_change(event):
