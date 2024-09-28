@@ -33,13 +33,29 @@ def update_brightness(port, value):
     """Update the brightness value and make sure it's not below 5%."""
     if value < 5:
         value = 5  # Enforce minimum brightness of 5%
+    elif value > 100:
+        value = 100  # Enforce maximum brightness of 100%
     set_brightness(port, value)
     brightness_percentage[port].set(value)
 
+# Function to increase brightness by 1%
+def increase_brightness(port):
+    """Increase brightness by 1% for the given port."""
+    current_value = brightness_percentage[port].get()
+    if current_value < 100:
+        update_brightness(port, current_value + 1)
+
+# Function to decrease brightness by 1%
+def decrease_brightness(port):
+    """Decrease brightness by 1% for the given port."""
+    current_value = brightness_percentage[port].get()
+    if current_value > 5:
+        update_brightness(port, current_value - 1)
+
 # Create the main Tkinter window
 root = Tk()
-root.geometry("500x300")
-root.minsize(500, 300)  # Set minimum window size
+root.geometry("600x300")
+root.minsize(600, 300)  # Set minimum window size
 root.resizable(True, True)
 root.title("Brightness Control")
 
@@ -53,14 +69,15 @@ brightness_sliders = {}
 brightness_label = StringVar()
 brightness_label.set("Brightness:")
 
-# Adjusting padding and layout
+# Adjust padding and layout
 for port in ports:
     frame = Frame(root)
     frame.pack(pady=5, padx=10, fill='x')  # Add horizontal padding for a cleaner look
-    
-    # Create a grid for aligning port names and sliders
-    frame.grid_columnconfigure(0, weight=1)  # Make the first column (port names) flexible
-    frame.grid_columnconfigure(1, weight=3)  # The second column (sliders) is wider
+
+    # Create a grid for aligning port names, sliders, and buttons
+    frame.grid_columnconfigure(0, weight=1)  # First column for port names
+    frame.grid_columnconfigure(1, weight=3)  # Second column for sliders
+    frame.grid_columnconfigure(2, weight=0)  # Third column for buttons
 
     # Label for the port name, aligned to the left
     port_label = Label(frame, text=port, anchor='w')
@@ -77,6 +94,13 @@ for port in ports:
         slider.grid(row=0, column=1, padx=5)  # Align the slider to the right with padding
         slider.bind("<Motion>", lambda event, p=port: update_brightness(p, brightness_percentage[p].get()))
         brightness_sliders[port] = slider
+
+        # Add "+" and "-" buttons for increasing and decreasing brightness by 1%
+        minus_button = Button(frame, text="-", command=lambda p=port: decrease_brightness(p))
+        minus_button.grid(row=0, column=2, padx=5, sticky='e')  # Add button to the right of the slider
+
+        plus_button = Button(frame, text="+", command=lambda p=port: increase_brightness(p))
+        plus_button.grid(row=0, column=3, padx=5, sticky='w')  # Add button to the right of the slider
     else:
         port_label.config(fg='gray')  # Gray out inactive ports
 
