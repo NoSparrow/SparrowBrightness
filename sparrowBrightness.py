@@ -3,6 +3,9 @@ import subprocess
 from tkinter import *
 from tkinter import ttk
 
+# Lista języków - dodaj tutaj kolejne języki, jak potrzebujesz
+LANGUAGES = {"English": "en", "Polski": "pl"}
+
 # Zmienna globalna dla języka
 current_language = "en"  # Domyślny język to angielski
 
@@ -30,9 +33,9 @@ def set_brightness(port, brightness):
     subprocess.call(['xrandr', '--output', port, '--brightness', str(brightness / 100)])
 
 # Ustawienie języka
-def set_language(lang):
+def set_language(lang_key):
     global current_language
-    current_language = lang
+    current_language = LANGUAGES[lang_key]
     update_ui_language()
 
 # Aktualizacja interfejsu użytkownika w zależności od języka
@@ -40,11 +43,9 @@ def update_ui_language():
     if current_language == "en":
         root.title("Brightness Control")
         brightness_label.set("Brightness:")
-        lang_button.config(text="Change to Polski")
     else:
         root.title("Podświetlenie ekranu")
         brightness_label.set("Podświetlenie:")
-        lang_button.config(text="Zmień na English")
     update_port_labels()
 
 # Funkcja do aktualizacji etykiet portów
@@ -95,9 +96,13 @@ for port in ports:
     else:
         port_label.config(fg='gray')  # Wyłączone porty
 
-# Przycisk do zmiany języka
-lang_button = Button(root, text="Change to Polski", command=lambda: set_language("pl"))
-lang_button.pack(pady=5)
+# Lista rozwijana do wyboru języka
+selected_language = StringVar()
+selected_language.set("English")  # Domyślnie język angielski
+
+# Funkcja dla menu języka
+language_menu = OptionMenu(root, selected_language, *LANGUAGES.keys(), command=set_language)
+language_menu.pack(pady=5)
 
 # Aktualizacja języka przy uruchomieniu
 update_ui_language()
