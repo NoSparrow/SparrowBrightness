@@ -3,17 +3,12 @@ import subprocess
 from tkinter import *
 from tkinter import ttk
 
-# Lista języków - dodaj tutaj kolejne języki, jak potrzebujesz
-LANGUAGES = {"English": "en", "Polski": "pl"}
-
-# Zmienna globalna dla języka
-current_language = "en"  # Domyślny język to angielski
-
-# Funkcja do pobierania portów i ich statusów
+# Function to get connected and disconnected ports using xrandr
 def get_ports():
+    """Get the list of active and inactive ports from xrandr command."""
     output = subprocess.check_output("xrandr", universal_newlines=True)
     lines = output.splitlines()
-    
+
     ports = {}
     for line in lines:
         if " connected" in line:
@@ -28,84 +23,57 @@ def get_ports():
             ports[port_name] = status
     return ports
 
-# Funkcja do zmiany jasności (szeregowa)
+# Function to set the brightness of a specific port
 def set_brightness(port, brightness):
+    """Set the brightness level for a specific port using xrandr."""
     subprocess.call(['xrandr', '--output', port, '--brightness', str(brightness / 100)])
 
-# Ustawienie języka
-def set_language(lang_key):
-    global current_language
-    current_language = LANGUAGES[lang_key]
-    update_ui_language()
-
-# Aktualizacja interfejsu użytkownika w zależności od języka
-def update_ui_language():
-    if current_language == "en":
-        root.title("Brightness Control")
-        brightness_label.set("Brightness:")
-    else:
-        root.title("Podświetlenie ekranu")
-        brightness_label.set("Podświetlenie:")
-    update_port_labels()
-
-# Funkcja do aktualizacji etykiet portów
-def update_port_labels():
-    for port in ports:
-        if ports[port] == "active":
-            port_labels[port].config(fg='black')
-        else:
-            port_labels[port].config(fg='gray')
-
-# Funkcja do aktualizacji jasności
+# Function to update the brightness value and apply it
 def update_brightness(port, value):
+    """Update the brightness value and make sure it's not below 5%."""
     if value < 5:
-        value = 5
+        value = 5  # Enforce minimum brightness of 5%
     set_brightness(port, value)
     brightness_percentage[port].set(value)
 
-# Tworzenie aplikacji Tkinter
+# Create the main Tkinter window
 root = Tk()
 root.geometry("400x300")
 root.minsize(400, 300)
 root.resizable(True, True)
+root.title("Brightness Control")
 
-# Ustawienia języka
+# Initialize port information
 ports = get_ports()
 brightness_percentage = {}
 port_labels = {}
 brightness_sliders = {}
 
-# Etykiety i suwaki dla każdego portu
+# Create labels and sliders for each port
 brightness_label = StringVar()
+brightness_label.set("Brightness:")
+
 for port in ports:
     frame = Frame(root)
     frame.pack(pady=5)
-    
+
+    # Label for the port name
     port_label = Label(frame, text=port)
     port_label.pack(side=LEFT)
-    
+
     port_labels[port] = port_label
 
     if ports[port] == "active":
-        brightness_percentage[port] = IntVar(value=100)  # Domyślna jasność na 100%
-        
+        # Default brightness is set to 100%
+        brightness_percentage[port] = IntVar(value=100)
+
+        # Slider to adjust brightness from 5% to 100%
         slider = ttk.Scale(frame, from_=5, to=100, variable=brightness_percentage[port], orient='horizontal')
         slider.pack(side=LEFT, padx=5)
         slider.bind("<Motion>", lambda event, p=port: update_brightness(p, brightness_percentage[p].get()))
         brightness_sliders[port] = slider
     else:
-        port_label.config(fg='gray')  # Wyłączone porty
+        port_label.config(fg='gray')  # Gray out inactive ports
 
-# Lista rozwijana do wyboru języka
-selected_language = StringVar()
-selected_language.set("English")  # Domyślnie język angielski
-
-# Funkcja dla menu języka
-language_menu = OptionMenu(root, selected_language, *LANGUAGES.keys(), command=set_language)
-language_menu.pack(pady=5)
-
-# Aktualizacja języka przy uruchomieniu
-update_ui_language()
-
-# Rozpoczęcie pętli aplikacji
+# Start the Tkinter main loop
 root.mainloop()
