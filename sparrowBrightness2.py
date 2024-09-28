@@ -9,7 +9,7 @@ class SparrowBrightnessApp:
     def __init__(self, root):
         self.root = root
         self.root.title("SparrowBrightness")
-        self.root.iconphoto(False, tk.PhotoImage(file=self.resource_path("images/brightness-icon.png")))
+        # self.root.iconphoto(False, tk.PhotoImage(file=self.resource_path("brightness-icon.png")))
         self.language = self.load_language()
         self.create_widgets()
         self.update_ports()
