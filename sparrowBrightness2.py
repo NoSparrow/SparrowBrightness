@@ -45,11 +45,14 @@ class BrightnessControl(QtWidgets.QWidget):
         self.tray_icon.show()
 
     def get_brightness(self):
-        result = subprocess.run(['xbacklight', '-get'], stdout=subprocess.PIPE)
-        return int(float(result.stdout))
+        result = subprocess.run(['xrandr', '--verbose'], stdout=subprocess.PIPE)
+        for line in result.stdout.decode().split('\n'):
+            if 'Brightness' in line:
+                return int(float(line.split()[1]) * 100)
+        return 100
 
     def set_brightness(self, value):
-        subprocess.run(['xbacklight', '-set', str(value)])
+        subprocess.run(['xrandr', '--output', 'eDP-1', '--brightness', str(value / 100)])
         self.brightness_label.setText(f'{value}%')
 
     def change_language(self, index):
