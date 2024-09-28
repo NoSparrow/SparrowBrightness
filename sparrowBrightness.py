@@ -11,7 +11,7 @@ class BrightnessApp:
         self.root.title("Brightness Control")
         self.root.geometry("400x300")
 
-        self.language = 'en'
+        self.language = 'English'
         self.ports = []
 
         # Dodanie interfejsu graficznego
@@ -25,8 +25,8 @@ class BrightnessApp:
         self.language_label = ttk.Label(self.root, text="Language:")
         self.language_label.pack(pady=5)
 
-        self.language_var = tk.StringVar(value='en')
-        self.language_menu = ttk.Combobox(self.root, textvariable=self.language_var, values=['en', 'pl'])
+        self.language_var = tk.StringVar(value='English')
+        self.language_menu = ttk.Combobox(self.root, textvariable=self.language_var, values=['English', 'Polski'])
         self.language_menu.pack(pady=5)
         self.language_menu.bind('<<ComboboxSelected>>', self.change_language)
 
@@ -40,10 +40,10 @@ class BrightnessApp:
 
     def change_language(self, event=None):
         self.language = self.language_var.get()
-        if self.language == 'en':
+        if self.language == 'English':
             self.language_label.config(text="Language:")
             self.refresh_button.config(text="Refresh Ports")
-        elif self.language == 'pl':
+        elif self.language == 'Polski':
             self.language_label.config(text="Język:")
             self.refresh_button.config(text="Odśwież porty")
 
