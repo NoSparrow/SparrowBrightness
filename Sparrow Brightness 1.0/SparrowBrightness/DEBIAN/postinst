@@ -1,0 +1,25 @@
+#!/bin/bash
+set -e
+
+# Tworzenie pliku .desktop
+cat << EOF > /usr/share/applications/sparrowbrightness.desktop
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Sparrow Brightness
+Comment=Screen brightness control tool
+Exec=python3 /usr/bin/sparrowBrightness.py
+Icon=sparrowbrightness
+Terminal=false
+Categories=Utility;
+EOF
+
+# Ustalamy uprawnienia
+chmod 644 /usr/share/applications/sparrowbrightness.desktop
+
+# Aktualizacja pamięci podręcznej ikon
+gtk-update-icon-cache /usr/share/icons/hicolor
+
+exit 0
+
+# Icons: https://iconmonstr.com/

@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Sparrow Brightness
+Comment=Adjust screen brightness easily
+Exec=python3 /usr/bin/sparrowBrightness.py
+Icon=sparrowbrightness
+Terminal=false
+Categories=Utility;
