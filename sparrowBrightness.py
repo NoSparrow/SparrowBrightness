@@ -106,4 +106,3 @@ for port in ports:
 
 # Start the Tkinter main loop
 root.mainloop()
-v
